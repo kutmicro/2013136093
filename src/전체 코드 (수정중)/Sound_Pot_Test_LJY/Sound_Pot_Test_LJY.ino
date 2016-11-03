@@ -1,18 +1,27 @@
 //2013136093 이재영 2016_2학기 마이크로프로세서
+//https://circuits.io/circuits/2997022-the-unnamed-circuit/edit#breadboard
 
-#define N_PIXELS  8                              // LED 핀 갯수 설정
+const int N_LEDLINE = 6;                       // 레지스터 갯수 설정
 const int sampleWindow = 50;                     // (50 mS = 20Hz) 샘플링 시간 결정 50ms동안 센서 값을 읽음
 unsigned int sample;
-const int led[] = {4,5,6,7,8,9,10,11};  
+//테스트용 led    const int led[] = {4,5,6,7,8,9,10,11};  
 int pot = A1;                                    //가변저항 입력
+int sound = A0;                                  //오디오센서 입력
+
+// 시프트 레지스터 설정
+int latchPin = 2;
+int clockPin = 3;
+const int LedData[] = {4,5,6,7,8,9};
+
 
 void setup() 
 {
-   Serial.begin(9600);
-
-   for(int i=0; i<N_PIXELS; i++)
+  Serial.begin(9600);
+  pinMode(latchPin,OUTPUT);
+  pinMode(clockPin,OUTPUT); 
+  for(int i=0; i<N_LEDLINE; i++)
   {
-    pinMode(led[i],OUTPUT); 
+    pinMode(LedData[i],OUTPUT); 
   }
 }
  
@@ -28,7 +37,7 @@ void loop()
  
    while (millis() - startMillis < sampleWindow)   // 50ms 지정된 시간만큼 데이터 샘플링
    {
-      sample = analogRead(0);
+      sample = analogRead(sound);
       if (sample < 1024)                           // 1024 이상이면 버림
       {
          if (sample > signalMax)                   // 최댓값 갱신
@@ -41,17 +50,16 @@ void loop()
          }
       }
    }
-   peakToPeak = signalMax - signalMin;             // max - min = peak-peak 진폭
+   peakToPeak = signalMax - signalMin;             // max - min = peak-peak 진폭 = 소리크기
   
-   Serial.println(peakToPeak);                    //시리얼 출력
-   Serial.println(sensitive); 
+   Serial.println(peakToPeak/sensitive);           //시리얼 출력
   int height = peakToPeak/(sensitive/10);          // 높이만큼 led출력해준다. 가변 저항으로 민감도 변경
   
-  for(int i=0; i<N_PIXELS; i++)
+  for(int i=0; i<N_LEDLINE; i++)
   {
     if(i < height) 
-    { digitalWrite(led[i], HIGH); }
+    { digitalWrite(LedData[i], HIGH); }
     else 
-    { digitalWrite(led[i], LOW);  }
+    { digitalWrite(LedData[i], LOW);  }
   }
 }
