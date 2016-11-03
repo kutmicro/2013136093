@@ -29,7 +29,7 @@ void setup()
 void loop() 
 {
    unsigned int sensitive = analogRead(pot);       // 가변저항의 값을 감도로 받음.
-   unsigned long startMillis= millis();            // 시작 시간을 잰다. millis함수는 아두이노 시작 시간을 측정
+   unsigned long startMillis= millis();            // 시작 시간을 잰다. millis() 함수가 현재시간(아두이노가 시작된 후부터 경과된 시간)을 밀리초 단위로(1/1000 초) 리턴 
    unsigned int peakToPeak = 0;                    // peak-to-peak level
  
    unsigned int signalMax = 0;
