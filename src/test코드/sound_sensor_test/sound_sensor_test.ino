@@ -5,6 +5,7 @@ unsigned int sample;
 int sound = A0;  
 
 void setup() {
+   analogReference(INTERNAL1V1); //아날로그 입력의 기준 전압을 내부전압 1.1V로 설정.
    Serial.begin(9600);
    pinMode(sound,INPUT);      //A0핀을 input으로 설정
 }
@@ -23,13 +24,9 @@ void loop() {
       if (sample < 1024)                           // 1024 이하일 때
       {
          if (sample > signalMax)                   // 최댓값 갱신
-         {
-            signalMax = sample;                    // 최댓값이 기존 최댓값보다 높으면 갱신
-         }
+         { signalMax = sample; }                    // 최댓값이 기존 최댓값보다 높으면 갱신
          else if (sample < signalMin)
-         {
-            signalMin = sample;                    // 최소값 갱신
-         }
+         { signalMin = sample; }                    // 최소값 갱신
       }
    }
    peakToPeak = signalMax - signalMin;             // max - min = peak-peak 진폭 = 소리크기
