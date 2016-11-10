@@ -1,10 +1,12 @@
 //2013136093 이재영 2016_2학기 마이크로프로세서
-//https://circuits.io/circuits/2997022-the-unnamed-circuit/edit#breadboard
 
-const int N_LEDLINE = 6;                       // 레지스터 갯수 설정
+//타이머 인터럽트 사용을 위한 라이브러리.
+//타이머 인터럽트는 LED점멸에 사용할 예정
+#include <MsTimer2.h>
+
+const int N_LEDLINE = 6;                         // 레지스터 갯수 설정
 const int sampleWindow = 50;                     // (50 mS = 20Hz) 샘플링 시간 결정 50ms동안 센서 값을 읽음
 unsigned int sample;
-//테스트용 led    const int led[] = {4,5,6,7,8,9,10,11};  
 int pot = A1;                                    //가변저항 입력
 int sound = A0;                                  //오디오센서 입력
 
@@ -13,18 +15,26 @@ int latchPin = 2;
 int clockPin = 3;
 const int LedData[] = {4,5,6,7,8,9};
 
+//타이머 인터럽트에 사용할 변수 선언
+static int IsLedOn = 0;
+
+//타이머에서 지정된 시간이 지나면 실행하게 하는 인터럽트 함수
+void timerISR()
+{ IsLedOn++; }
 
 void setup() 
 {
+  //시리얼 시작과 사용하는 핀들의 PINMODE설정(GPIO?)
   Serial.begin(9600);
   pinMode(latchPin,OUTPUT);
   pinMode(clockPin,OUTPUT); 
   for(int i=0; i<N_LEDLINE; i++)
-  {
-    pinMode(LedData[i],OUTPUT); 
-  }
+  { pinMode(LedData[i],OUTPUT); }
+
+  //타이머 세팅과 스타트 함수.
+  MsTimer2::set(6,timerISR);      //6ms마다 timerISR함수를 실행한다.
+  MsTimer2::start();
 }
- 
  
 void loop() 
 {
@@ -41,13 +51,9 @@ void loop()
       if (sample < 1024)                           // 1024 이상이면 버림
       {
          if (sample > signalMax)                   // 최댓값 갱신
-         {
-            signalMax = sample;                    // 최댓값이 기존 최댓값보다 높으면 갱신
-         }
+         { signalMax = sample; }                    // 최댓값이 기존 최댓값보다 높으면 갱신
          else if (sample < signalMin)
-         {
-            signalMin = sample;                    // 최소값 갱신
-         }
+         { signalMin = sample; }                    // 최소값 갱신
       }
    }
    peakToPeak = signalMax - signalMin;             // max - min = peak-peak 진폭 = 소리크기
