@@ -107,8 +107,11 @@ void loop() {
   if(height > n_height) { height = n_height; }
 
   //옆으로 출력되는 것을 구현하기 위해 새로운 data를 배열에 넣기 전에 data를 옆으로 한칸씩 미뤄준다
-  for(int i=0; i <n_reg ; i++)
-  { data_led[i+1] = data_led[i]; }
+  data_led[5] = data_led[4];
+  data_led[4] = data_led[3];
+  data_led[3] = data_led[2];
+  data_led[2] = data_led[1];
+  data_led[1] = data_led[0];
 
   //led[0]에 높이에 따른 데이터 출력
   //출력할 시프트 데이터 byte 선언
