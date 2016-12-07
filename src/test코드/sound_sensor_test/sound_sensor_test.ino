@@ -5,7 +5,6 @@ unsigned int sample;
 int sound = A0;  
 
 void setup() {
-   analogReference(INTERNAL1V1); //아날로그 입력의 기준 전압을 내부전압 1.1V로 설정.
    Serial.begin(9600);
    pinMode(sound,INPUT);      //A0핀을 input으로 설정
 }
